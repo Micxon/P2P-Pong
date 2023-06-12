@@ -19,10 +19,10 @@ class UdpConnectionHandler(object):
         self._udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         if mode == "host":
-            self._udp_socket.bind(socket.gethostname(), UdpConnectionHandler.__HOST_S_PORT)
+            self._udp_socket.bind((socket.gethostname(), UdpConnectionHandler.__HOST_S_PORT))
             self._d_port = UdpConnectionHandler.__GUEST_S_PORT
         else:
-            self._udp_socket.bind(socket.gethostname(), UdpConnectionHandler.__GUEST_S_PORT)
+            self._udp_socket.bind((socket.gethostname(), UdpConnectionHandler.__GUEST_S_PORT))
             self._d_port = UdpConnectionHandler.__HOST_S_PORT
 
         self._udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
