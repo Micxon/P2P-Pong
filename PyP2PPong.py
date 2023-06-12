@@ -12,5 +12,15 @@ def main():
     else:
         exit
 
+    while active_lobby.is_open():
+        if active_lobby.is_ready():
+            print("Game is ready to start!")
+            break
+        continue
+
+    print("Game lobby has been closed. Exiting game")
+
+
+
 if __name__ == "__main__":
     main()

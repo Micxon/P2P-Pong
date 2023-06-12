@@ -9,6 +9,7 @@ class GameLobby(object):
         self._msg_handler = None
         self._peer = None
         self._is_open = False
+        self._is_game_ready = False
 
     def open_lobby(self, mode):
         self._is_open = True
@@ -19,6 +20,12 @@ class GameLobby(object):
             self.__launch_lobby()
             self.__send_msg_to_peer("JOIN REQUEST")
 
+    def is_open(self):
+        return self._is_open
+    
+    def is_ready(self):
+        return self._is_game_ready
+
     def __launch_lobby(self):
         self._connection_handler.start_sender()
         self._connection_handler.start_listener()
@@ -28,12 +35,14 @@ class GameLobby(object):
     def close_lobby(self):
         print("Closing game lobby")
         self._is_open = False
+        self._is_game_ready = False
+        self._peer = None
         self._connection_handler.stop_listener()
         self._connection_handler.stop_sender()
 
     def __read_msgs(self):
         if not self._is_open:
-            return
+            return #TODO Check if it actually kills the thread cleanly
 
         while True:
             if self._connection_handler.pending_msgs():
@@ -43,18 +52,17 @@ class GameLobby(object):
                     case "JOIN REQUEST":
                         self.__process_join_request(addr)
                     case "ACCEPTED":
-                        self.__accept_rdy_check(addr)
+                        self.__confirm_rdy_check(addr)
                     case "REJECTED":
                         self.__process_rejected_request(addr)
                     case "READY":
-                        self.__accept_rdy_check(addr)
+                        self.__accept_rdy_check()
                     case "QUIT":
-                        self._peer = None
-                        return #TODO Check if it actually kills the thread cleanly
+                        self.__process_peer_quit()
                     case _:
                         continue
 
-    def __accept_rdy_check(self, addr):
+    def __confirm_rdy_check(self, addr):
         while True:
             print("The join request has been accepted by ", addr, ". Ready to start? (Y/N):")
             reply = input("> ")
@@ -68,18 +76,30 @@ class GameLobby(object):
                 reply = input("> ")
 
                 if reply == "Y":
-                    self.quit_peer_lobby(addr)
+                    self.quit_remote_lobby(addr)
                     break
 
                 print("take your time. You will be prompted again in 5 seconds")
                 time.sleep(5)
 
-    def quit_peer_lobby(self, addr=None):
+    def __accept_rdy_check(self):
+        print(self._peer, " Is ready to start the game")
+        self._is_game_ready = True
+
+    def __process_peer_quit(self):
+        print(self._peer, " has left the lobby. Want to keep looking for rivals? (Y/N):")
+        reply = input("> ")
+
+        if reply == "Y":
+            self._peer = None
+        else:
+            self.close_lobby()
+
+    def quit_remote_lobby(self, addr=None):
         if addr is None:
             self.__send_msg_to_peer("QUIT", self._peer)
         else:
             self.__send_msg_to_peer("QUIT", addr)
-        self._peer = None
         self.close_lobby()
 
     def __send_msg_to_peer(self, msg, addr=None):

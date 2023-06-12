@@ -40,7 +40,6 @@ class UdpConnectionHandler(object):
     def start_listener(self):
         self._is_receiving = True
         self._receiver = threading.Thread(target=self.__rcv_msgs)
-        print("waiting for peer to join")
         self._receiver.start()
 
     def start_sender(self):
