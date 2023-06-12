@@ -56,4 +56,4 @@ class UdpConnectionHandler(object):
 
     def enqueue_msg(self, msg):
         #FIXME Write to queue using sync method instead of using insert
-        self._outbound_queue.insert(msg)
+        self._outbound_queue.append(msg)
