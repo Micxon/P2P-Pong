@@ -45,7 +45,7 @@ class UdpConnectionHandler(object):
 
     def __snd_msg(self):
         while True:
-            if self._outbound_queue.count() == 0:
+            if len(self._outbound_queue) == 0:
                 continue
             #FIXME Get message from sync next method instead of using pop
             msg = self._outbound_queue.pop()
