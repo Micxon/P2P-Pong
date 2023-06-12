@@ -21,7 +21,7 @@ def main():
         continue
 
     print("Game lobby has been closed. Exiting game")
-
+    sys.exit()
 
 
 if __name__ == "__main__":
