@@ -16,6 +16,7 @@ class GameLobby(object):
         self._connection_handler.initialize_connection(mode)
         if mode == "host":
             self.__launch_lobby()
+            print("Waiting for opponent to connect...")
         elif mode == "connect":
             self.__launch_lobby()
             self.__send_msg_to_peer("JOIN REQUEST")

@@ -51,7 +51,8 @@ class UdpConnectionHandler(object):
         while True:
             if self._is_receiving:
                 data, addr = self._udp_socket.recvfrom(1024)
-                self._inbound_queue.append((addr, data.decode()))
+                host, port = addr
+                self._inbound_queue.append((host, data.decode()))
                 #print("[Received message] {}: {}".format(addr, data.decode()))
             else:
                 self._inbound_queue.clear()

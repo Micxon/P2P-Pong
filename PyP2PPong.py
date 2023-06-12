@@ -1,3 +1,4 @@
+import sys
 from Lobby.game_lobby import GameLobby
 from UI.temp_cmd_menu import CMD_Menu
 
@@ -10,7 +11,8 @@ def main():
     if main_menu.get_mode() != "host" or main_menu.get_mode() != "connect":
         active_lobby.open_lobby(main_menu.get_mode())
     else:
-        exit
+        print("Invalid selection, exiting program")
+        sys.exit()
 
     while active_lobby.is_open():
         if active_lobby.is_ready():
