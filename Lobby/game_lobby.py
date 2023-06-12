@@ -23,7 +23,7 @@ class GameLobby(object):
 
     def is_open(self):
         return self._is_open
-    
+
     def is_ready(self):
         return self._is_game_ready
 

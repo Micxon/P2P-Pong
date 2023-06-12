@@ -1,5 +1,5 @@
 class CMD_Menu(object):
-    
+
     def __init__(self) -> None:
         self._options = 0
         self._mode = ""
@@ -10,6 +10,6 @@ class CMD_Menu(object):
         print("- 'connect' to connect to server")
         print("- 'quit' to quit game")
         self._mode = input("> ")
-    
+
     def get_mode(self) -> str:
         return self._mode
