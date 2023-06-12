@@ -86,4 +86,4 @@ class UdpConnectionHandler(object):
         return self._inbound_queue.pop()
 
     def pending_msgs(self):
-        return len(self._inbound_queue) == 0
+        return len(self._inbound_queue) > 0
