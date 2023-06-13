@@ -6,8 +6,8 @@ class CMD_Menu(object):
 
     def display(self):
         print("P2P-PONG v0.01")
-        print("- 'host' to host game")
-        print("- 'connect' to connect to server")
+        print("- 'host' to host a game lobby")
+        print("- 'join' to connect to an existing game lobby within the network")
         print("- 'quit' to quit game")
         self._mode = input("> ")
 

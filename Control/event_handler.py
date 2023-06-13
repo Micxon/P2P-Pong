@@ -1,7 +1,7 @@
 import sys
 import pygame
 
-class EventHandler:
+class EventHandler():
     def __init__(self, interface_controller):
         self.interface_controller = interface_controller
         self.collision_detected = True

@@ -2,13 +2,11 @@ import socket
 import threading
 
 class UdpConnectionHandler(object):
-    __HOST_S_PORT = 45585
-    __GUEST_S_PORT = 45584
-
-    def __init__(self) -> None:
+    def __init__(self, host_port, guest_port) -> None:
         self._udp_socket = None
+        self.__HOST_S_PORT = host_port
+        self.__GUEST_S_PORT = guest_port
         self._mode = None
-        self._d_addr = None
         self._d_port = None
         self._receiver = None
         self._sender = None
@@ -22,11 +20,11 @@ class UdpConnectionHandler(object):
         self._udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         if mode == "host":
-            self._udp_socket.bind((socket.gethostname(), UdpConnectionHandler.__HOST_S_PORT))
-            self._d_port = UdpConnectionHandler.__GUEST_S_PORT
+            self._udp_socket.bind((socket.gethostname(), self.__HOST_S_PORT))
+            self._d_port = self.__GUEST_S_PORT
         else:
-            self._udp_socket.bind((socket.gethostname(), UdpConnectionHandler.__GUEST_S_PORT))
-            self._d_port = UdpConnectionHandler.__HOST_S_PORT
+            self._udp_socket.bind((socket.gethostname(), self.__GUEST_S_PORT))
+            self._d_port = self.__HOST_S_PORT
 
         self._udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -53,7 +51,6 @@ class UdpConnectionHandler(object):
                 data, addr = self._udp_socket.recvfrom(1024)
                 host, port = addr
                 self._inbound_queue.append((host, data.decode()))
-                #print("[Received message] {}: {}".format(addr, data.decode()))
             else:
                 self._inbound_queue.clear()
                 return
@@ -70,9 +67,6 @@ class UdpConnectionHandler(object):
             else:
                 self._outbound_queue.clear()
                 return
-
-    def identify_peer(self, addr):
-        self._d_addr = addr
 
     def enqueue_outbound_msg(self, msg, addr=None):
         #FIXME Write to queue using sync method instead of using append

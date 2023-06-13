@@ -5,7 +5,7 @@ from Network.udp_connection_handler import UdpConnectionHandler
 class GameLobby(object):
 
     def __init__(self) -> None:
-        self._connection_handler = UdpConnectionHandler()
+        self._connection_handler =  UdpConnectionHandler(45585, 45584)
         self._msg_handler = None
         self._peer = None
         self._is_open = False

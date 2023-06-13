@@ -1,8 +1,9 @@
-import pygame
-from EventHandler import EventHandler
+from Control.event_handler import EventHandler
 from GameLogic import GameLogic
+import sys
+import pygame
 
-class InterfaceController:
+class InterfaceController():
     def __init__(self):
         # Dimensiones de la ventana
         self.width = 800
@@ -38,70 +39,69 @@ class InterfaceController:
         self.ball_speed_x = 0.9
         self.ball_speed_y = 0.9
 
-    def display_menu(self):
-        # Configuración de la fuente
-        font = pygame.font.Font(None, 24)
+    def display_menu2(self):
+        screen_width, screen_height = 800, 600
+        screen = pygame.display.set_mode((screen_width, screen_height))
+        pygame.display.set_caption("P2Pong")
 
-        # Variables para el campo de entrada y las opciones del menú
-        username = ""
-        selected_option = None
+        clock = pygame.time.Clock()
+        font = pygame.font.Font(None, 36)
+        font_title = pygame.font.Font(None, 48)
+        button_width, button_height = 200, 50
+        button_margin = 20
+        
+        title_text = font_title.render("P2Pong", True, (0, 0, 0))
+        title_text_rect = title_text.get_rect(center=(screen_width // 2, screen_height // 4))
 
-        while selected_option is None:
+        join_button_rect = pygame.Rect((screen_width - button_width) // 2, (screen_height - button_height) // 2 - button_height - button_margin, button_width, button_height)
+        host_button_rect = pygame.Rect((screen_width - button_width) // 2, (screen_height - button_height) // 2, button_width, button_height)
+        exit_button_rect = pygame.Rect((screen_width - button_width) // 2, (screen_height - button_height) // 2 + button_height + button_margin, button_width, button_height)
+
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    return
-
+                    sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
-                    if create_room_button.collidepoint(mouse_pos):
-                        selected_option = "Crear sala" if len(username) > 0 else None
-                    elif join_room_button.collidepoint(mouse_pos):
-                        selected_option = "Unirse a sala"
-                    elif exit_button.collidepoint(mouse_pos):
-                        selected_option = "Salir"
+                    if join_button_rect.collidepoint(mouse_pos):
+                        print("Join Room button clicked")
+                        self.display_notification("Looking for open lobbies")
+                        return "connect"
+                    elif host_button_rect.collidepoint(mouse_pos):
+                        print("Host Room button clicked")
+                        self.display_notification("Waiting for opponent to connect")
+                        return "host"
+                    elif exit_button_rect.collidepoint(mouse_pos):
+                        pygame.quit()
+                        sys.exit()
 
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_BACKSPACE:
-                        username = username[:-1]
-                    else:
-                        username += event.unicode
+            screen.fill((255, 255, 255))
+            screen.blit(title_text, title_text_rect)
 
-            # Dibujar el fondo y el menú
-            self.window.fill(self.BLACK)
-            menu_text = font.render("Bienvenido al juego Pong", True, self.WHITE)
-            text_rect = menu_text.get_rect(center=(self.width // 2, self.height // 4))
-            self.window.blit(menu_text, text_rect)
+            join_button_color = (200, 200, 200) if join_button_rect.collidepoint(pygame.mouse.get_pos()) else (255, 255, 255)
+            pygame.draw.rect(screen, join_button_color, join_button_rect)
+            pygame.draw.rect(screen, (0, 0, 0), join_button_rect, 2)
+            join_button_text = font.render("Join Room", True, (0, 0, 0))
+            join_button_text_rect = join_button_text.get_rect(center=join_button_rect.center)
+            screen.blit(join_button_text, join_button_text_rect)
 
-            username_text = font.render("Ingresa tu nombre de usuario:", True, self.WHITE)
-            username_rect = username_text.get_rect(center=(self.width // 2, self.height // 2))
-            self.window.blit(username_text, username_rect)
+            host_button_color = (200, 200, 200) if host_button_rect.collidepoint(pygame.mouse.get_pos()) else (255, 255, 255)
+            pygame.draw.rect(screen, host_button_color, host_button_rect)
+            pygame.draw.rect(screen, (0, 0, 0), host_button_rect, 2)
+            host_button_text = font.render("Host Room", True, (0, 0, 0))
+            host_button_text_rect = host_button_text.get_rect(center=host_button_rect.center)
+            screen.blit(host_button_text, host_button_text_rect)
 
-            input_text = font.render(username, True, self.WHITE)
-            input_rect = input_text.get_rect(midtop=(self.width // 2, self.height // 2 + 30))
-            pygame.draw.rect(self.window, self.BLACK, pygame.Rect(input_rect.left - 5, input_rect.top - 5, input_rect.width + 10, input_rect.height + 10))
-            self.window.blit(input_text, input_rect)
-
-            create_room_button = pygame.draw.rect(self.window, self.WHITE, pygame.Rect(self.width // 2 - 100, self.height // 2 + 80, 200, 30))
-            create_room_text = font.render("Crear sala", True, self.BLACK)
-            create_room_text_rect = create_room_text.get_rect(center=create_room_button.center)
-            self.window.blit(create_room_text, create_room_text_rect)
-
-            join_room_button = pygame.draw.rect(self.window, self.WHITE, pygame.Rect(self.width // 2 - 100, self.height // 2 + 120, 200, 30))
-            join_room_text = font.render("Unirse a sala", True, self.BLACK)
-            join_room_text_rect = join_room_text.get_rect(center=join_room_button.center)
-            self.window.blit(join_room_text, join_room_text_rect)
-
-            exit_button = pygame.draw.rect(self.window, self.WHITE, pygame.Rect(self.width // 2 - 100, self.height // 2 + 160, 200, 30))
-            exit_text = font.render("Salir", True, self.BLACK)
-            exit_text_rect = exit_text.get_rect(center=exit_button.center)
-            self.window.blit(exit_text, exit_text_rect)
+            exit_button_color = (200, 200, 200) if exit_button_rect.collidepoint(pygame.mouse.get_pos()) else (255, 255, 255)
+            pygame.draw.rect(screen, exit_button_color, exit_button_rect)
+            pygame.draw.rect(screen, (0, 0, 0), exit_button_rect, 2)
+            exit_button_text = font.render("Exit", True, (0, 0, 0))
+            exit_button_text_rect = exit_button_text.get_rect(center=exit_button_rect.center)
+            screen.blit(exit_button_text, exit_button_text_rect)
 
             pygame.display.flip()
-
-        print(username)
-        return selected_option, username
-
+            clock.tick(60)
 
     def display_notification(self, message):
         # Configuración de la fuente
@@ -222,8 +222,76 @@ class InterfaceController:
 
         pygame.quit()
 
+    def display_menu(self):
+            # Configuración de la fuente
+            font = pygame.font.Font(None, 24)
+
+            # Variables para el campo de entrada y las opciones del menú
+            username = ""
+            selected_option = None
+
+            join_room_button = pygame.Rect((screen_width - button_width) // 2, (screen_height - button_height) // 2 - button_height - button_margin, button_width, button_height)
+            create_room_button = pygame.Rect((screen_width - button_width) // 2, (screen_height - button_height) // 2, button_width, button_height)
+            exit_button = pygame.Rect((screen_width - button_width) // 2, (screen_height - button_height) // 2 + button_height + button_margin, button_width, button_height)
+
+            while selected_option is None:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        return
+
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = pygame.mouse.get_pos()
+                        if create_room_button.collidepoint(mouse_pos):
+                            selected_option = "Crear sala" if len(username) > 0 else None
+                        elif join_room_button.collidepoint(mouse_pos):
+                            selected_option = "Unirse a sala"
+                        elif exit_button.collidepoint(mouse_pos):
+                            selected_option = "Salir"
+
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_BACKSPACE:
+                            username = username[:-1]
+                        else:
+                            username += event.unicode
+
+                # Dibujar el fondo y el menú
+                self.window.fill(self.BLACK)
+                menu_text = font.render("Bienvenido al juego Pong", True, self.WHITE)
+                text_rect = menu_text.get_rect(center=(self.width // 2, self.height // 4))
+                self.window.blit(menu_text, text_rect)
+
+                username_text = font.render("Ingresa tu nombre de usuario:", True, self.WHITE)
+                username_rect = username_text.get_rect(center=(self.width // 2, self.height // 2))
+                self.window.blit(username_text, username_rect)
+
+                input_text = font.render(username, True, self.WHITE)
+                input_rect = input_text.get_rect(midtop=(self.width // 2, self.height // 2 + 30))
+                pygame.draw.rect(self.window, self.BLACK, pygame.Rect(input_rect.left - 5, input_rect.top - 5, input_rect.width + 10, input_rect.height + 10))
+                self.window.blit(input_text, input_rect)
+
+                create_room_button = pygame.draw.rect(self.window, self.WHITE, pygame.Rect(self.width // 2 - 100, self.height // 2 + 80, 200, 30))
+                create_room_text = font.render("Crear sala", True, self.BLACK)
+                create_room_text_rect = create_room_text.get_rect(center=create_room_button.center)
+                self.window.blit(create_room_text, create_room_text_rect)
+
+                join_room_button = pygame.draw.rect(self.window, self.WHITE, pygame.Rect(self.width // 2 - 100, self.height // 2 + 120, 200, 30))
+                join_room_text = font.render("Unirse a sala", True, self.BLACK)
+                join_room_text_rect = join_room_text.get_rect(center=join_room_button.center)
+                self.window.blit(join_room_text, join_room_text_rect)
+
+                exit_button = pygame.draw.rect(self.window, self.WHITE, pygame.Rect(self.width // 2 - 100, self.height // 2 + 160, 200, 30))
+                exit_text = font.render("Salir", True, self.BLACK)
+                exit_text_rect = exit_text.get_rect(center=exit_button.center)
+                self.window.blit(exit_text, exit_text_rect)
+
+                pygame.display.flip()
+
+            print(username)
+            return selected_option, username
+
 # Crear una instancia de la clase InterfaceController y ejecutar el juego
 game = InterfaceController()
 #game.display_notification("Jaja soy yo de nuevo!!")
-#game.display_menu()
+game.display_menu2()
 game.run_game()
