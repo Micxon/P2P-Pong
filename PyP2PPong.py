@@ -25,6 +25,5 @@ def main():
     game_controller = P2PongGameControl()
     game_controller.launch_game()
 
-
 if __name__ == "__main__":
     main()
