@@ -291,7 +291,7 @@ class InterfaceController():
             return selected_option, username
 
 # Crear una instancia de la clase InterfaceController y ejecutar el juego
-game = InterfaceController()
+#game = InterfaceController()
 #game.display_notification("Jaja soy yo de nuevo!!")
-game.display_menu2()
-game.run_game()
+#game.display_menu2()
+#game.run_game()
