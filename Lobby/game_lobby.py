@@ -1,6 +1,7 @@
 import threading
 import time
 from Network.udp_connection_handler import UdpConnectionHandler
+import time
 
 class GameLobby(object):
 
@@ -37,7 +38,7 @@ class GameLobby(object):
             print("invalid entry, please chose either local or remote")
             lobby_type = input("> ")
 
-        if lobby_type == "local":            
+        if lobby_type == "local":
             self._connection_handler.initialize_connection(mode)
             self.__launch_lobby()
             self.__send_msg_to_peer("JOIN REQUEST")
