@@ -16,8 +16,35 @@ class GameLobby(object):
         self._connection_handler.initialize_connection(mode)
         if mode == "host":
             self.__launch_lobby()
-            print("Waiting for opponent to connect...")
-        elif mode == "connect":
+            print("Hosting lobby at: ", self._connection_handler._udp_socket.getsockname() , " Waiting for opponent to connect...")
+        elif mode == "join":
+            self.__launch_lobby()
+            self.__send_msg_to_peer("JOIN REQUEST")
+    
+    def open_vpn_lobby(self, mode):
+        self._is_open = True
+        #self._connection_handler.initialize_connection(mode)
+        if mode == "host":
+            self._connection_handler.initialize_connection(mode)
+            self.__launch_lobby()
+            print("Hosting lobby at: ", self._connection_handler._udp_socket.getsockname() , " Waiting for opponent to connect...")
+            return
+        
+        print("Chose either local or remote lobby")
+        lobby_type = input("> ")
+        
+        while lobby_type not in ("local" , "remote"):
+            print("invalid entry, please chose either local or remote")
+            lobby_type = input("> ")
+
+        if lobby_type == "local":            
+            self._connection_handler.initialize_connection(mode)
+            self.__launch_lobby()
+            self.__send_msg_to_peer("JOIN REQUEST")
+        else:
+            print("Enter lobby address")
+            self._peer = input("> ") #FIXME Data format validation
+            self._connection_handler.initialize_connection(mode)
             self.__launch_lobby()
             self.__send_msg_to_peer("JOIN REQUEST")
 
